@@ -18,6 +18,7 @@ Contributions are welcome! Please read the [CONTRIBUTING](./CONTRIBUTING.md) for
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+
 ## Acknowledgements
 
 - The Flask team for their powerful Python web framework
