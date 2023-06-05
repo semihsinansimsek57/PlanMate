@@ -12,15 +12,14 @@ This application uses encrypted configuration files to securely store sensitive 
 
 ## Contribution
 
-Contributions are welcome! Please read the [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+Contributions are welcome! Please read the [CONTRIBUTING](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
 - The Flask team for their powerful Python web framework
 - The SQLAlchemy team for their robust SQL toolkit and ORM
 - And of course, all the contributors who spend their time improving this project.
-- Deneme
