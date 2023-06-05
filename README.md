@@ -23,3 +23,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 - The Flask team for their powerful Python web framework
 - The SQLAlchemy team for their robust SQL toolkit and ORM
 - And of course, all the contributors who spend their time improving this project.
+- Deneme
