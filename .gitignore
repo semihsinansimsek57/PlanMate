@@ -1,0 +1,8 @@
+generate_key.py
+encrypt_config.py
+key.key
+config.enc
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

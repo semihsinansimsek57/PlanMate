@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <div class="container">
+        <div class="row justify-content-center"> <!-- Add 'justify-content-center' class -->
+            <div class="col-md-6">
+                <h2>Create Event Invitation</h2>
+                <form id="event-selection-form" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ g.csrf_token }}">
+                    <div class="form-group">
+                        <label for="event_id">Select Event:</label>
+                        <select name="event_id" class="form-control" id="event_id" required>
+                            <option value="">Choose an event</option>
+                            {% for event in events %}
+                                <option value="{{ event.event_id }}">{{ event.event_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generate Invitation</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Your Invitations</h2>
+                <div id="invitations-container">
+                    <!-- Display generated invitations here -->
+                    {% for invitation in invitations %}
+                        <li>
+                            <a href="/serve_invitation/{{ invitation.event_creator_id }}/{{ invitation.event_name }}"
+                               class="invitation-link">
+                                {{ invitation.event_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    </script>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* Middle the every element in form on horizontal line */
+        .form-group > * {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .row {
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}

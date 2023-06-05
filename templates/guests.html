@@ -1,0 +1,247 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <h1 class="text-center">Guests</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form id="create-guest-list-form" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ g.csrf_token }}">
+                    <div class="form-group">
+                        <label for="name">Guest list name:</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <input type="text" name="description" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create guest list</button>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <form id="create-guest-form" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ g.csrf_token }}">
+                    <div class="form-group">
+                        <label for="guest_list_id">Guest list:</label>
+                        <select name="guest_list_id" id="guest_list_id" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Guest name:</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Guest email:</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Guest phone:</label>
+                        <input type="tel" name="phone" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add guest</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="guest-lists-container" class="my-4">
+            <h2 class="text-center mb-4">Guest Lists</h2>
+            <div class="row">
+                {% for guest_list in guest_lists %}
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h3 class="card-title">{{ guest_list.guest_list_name }}</h3>
+                                <p class="card-text">{{ guest_list.guest_list_description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="guests-container" class="my-4">
+            <h2 class="text-center mb-4">Guests</h2>
+            <div class="row">
+                {% for guest in guests %}
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h3 class="card-title">{{ guest.guest_name }}</h3>
+                                <p class="card-text">Email: {{ guest.guest_email }}</p>
+                                <p class="card-text">Phone: {{ guest.guest_phone }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+        }
+
+        .card-text {
+            font-size: 1.2rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        #guests-container {
+            margin-top: 2rem;
+        }
+
+        #guest-lists-container {
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        div{
+            margin-top: 10px;
+        }
+
+        .row{
+            margin-top: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function getCSRFToken() {
+            return $('input[name="csrf_token"]').val();
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            function loadGuestListsAndGuests() {
+                $.ajax({
+                    url: '/guests_manage',
+                    type: 'POST',
+                    data: {operation: 'get_data', csrf_token: getCSRFToken()},
+                    dataType: 'json',
+                    success: function (data) {
+                        let guestListsContainer = $('#guest-lists-container');
+                        let guestListSelect = $('#guest_list_id');
+                        guestListsContainer.empty();
+                        guestListSelect.empty();
+                        if (data.guest_lists.length === 0) {
+                            guestListsContainer.append('<p>No guest lists available.</p>');
+                        } else {
+                            let row = $('<div class="row">');
+                            for (let i = 0; i < data.guest_lists.length; i++) {
+                                let col = $('<div class="col-md-4">');
+                                let card = $('<div class="card mb-3">');
+                                let cardBody = $('<div class="card-body">');
+                                let cardTitle = $('<h3 class="card-title">').text(data.guest_lists[i].name);
+                                let cardText = $('<p class="card-text">').text(data.guest_lists[i].description);
+
+                                cardBody.append(cardTitle, cardText);
+                                card.append(cardBody);
+                                col.append(card);
+                                row.append(col);
+
+                                // Add guest list option to the select element
+                                let option = $('<option>');
+                                option.val(data.guest_lists[i].id);
+                                option.text(data.guest_lists[i].name);
+                                guestListSelect.append(option);
+                            }
+                            guestListsContainer.append(row);
+                        }
+
+                        let guestsContainer = $('#guests-container');
+                        guestsContainer.empty();
+                        if (data.guests.length === 0) {
+                            guestsContainer.append('<p>No guests available.</p>');
+                        } else {
+                            let row = $('<div class="row">');
+                            for (let i = 0; i < data.guests.length; i++) {
+                                let col = $('<div class="col-md-4">');
+                                let card = $('<div class="card mb-3">');
+                                let cardBody = $('<div class="card-body">');
+                                let cardTitle = $('<h3 class="card-title">').text(data.guests[i].name);
+                                let cardTextEmail = $('<p class="card-text">').text("Email: " + data.guests[i].email);
+                                let cardTextPhone = $('<p class="card-text">').text("Phone: " + data.guests[i].phone);
+
+                                cardBody.append(cardTitle, cardTextEmail, cardTextPhone);
+                                card.append(cardBody);
+                                col.append(card);
+                                row.append(col);
+                            }
+                            guestsContainer.append(row);
+                        }
+                    },
+                    error: function () {
+                        console.error('Failed to fetch guest lists and guests.');
+                    }
+                });
+            }
+
+            $('#create-guest-list-form').on('submit', function (event) {
+                event.preventDefault();
+                let formData = $(this).serialize() + '&operation=create_guest_list' + '&csrf_token=' + getCSRFToken();
+                $.ajax({
+                    url: '/guests_manage',
+                    type: 'POST',
+                    data: formData,
+                    success: function () {
+                        loadGuestListsAndGuests();
+                        $('#create-guest-list-form').trigger('reset');
+                    }
+                });
+            });
+
+            $('#create-guest-form').on('submit', function (event) {
+                event.preventDefault();
+                let formData = $(this).serialize() + '&operation=create_guest' + '&csrf_token=' + getCSRFToken();
+                $.ajax({
+                    url: '/guests_manage',
+                    type: 'POST',
+                    data: formData,
+                    success: function () {
+                        loadGuestListsAndGuests();
+                        $('#create-guest-form').trigger('reset');
+                    },
+                    error: function () {
+                        console.error('Failed to create a guest.');
+                    }
+                });
+            });
+            loadGuestListsAndGuests();
+        });
+    </script>
+{% endblock %}
+

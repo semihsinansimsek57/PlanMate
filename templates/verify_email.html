@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        Verify Your Email Address
+                    </div>
+                    <div class="card-body">
+                        {% if message %}
+                            <div class="alert alert-success">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                        <form method="POST" action="{{ url_for('verify_email') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <div class="form-group">
+                                <label for="verification-token">Verification Token</label>
+                                <input type="text" class="form-control" id="verification-token"
+                                       name="verification_token">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Verify Email Address</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+
+        .card {
+            margin-top: 50px;
+        }
+
+        .card-header {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        button {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // when the email being sent or the email is getting verified, show an animated loading icon and disable the button
+        $(document).ready(function () {
+            $('#send-email').click(function () {
+                $(this).html('<i class="fa fa-spinner fa-spin"></i> Sending Email');
+                $(this).attr('disabled', true);
+            });
+
+            $('#verify-email').click(function () {
+                $(this).html('<i class="fa fa-spinner fa-spin"></i> Verifying Email');
+                $(this).attr('disabled', true);
+            });
+        });
+    </script>
+{% endblock %}

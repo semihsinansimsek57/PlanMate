@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div class="row justify-content-center align-items-center h-100">
+        <div class="col-md-6">
+            <h1 id="register-header">Register for PlanMate</h1>
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            <form method="post" action="{{ url_for('register') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" required
+                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                           placeholder="at least 8 characters" required
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                           placeholder="at least 8 characters" required
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}">
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('register-form');
+            form.addEventListener('submit', function (event) {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm_password').value;
+
+                if (password.length < 8) {
+                    alert('Password must be at least 8 characters long.');
+                    event.preventDefault();
+                } else if (!/\d/.test(password)) {
+                    alert('Password must contain at least one digit.');
+                    event.preventDefault();
+                } else if (!/[a-z]/.test(password)) {
+                    alert('Password must contain at least one lowercase letter.');
+                    event.preventDefault();
+                } else if (!/[A-Z]/.test(password)) {
+                    alert('Password must contain at least one uppercase letter.');
+                    event.preventDefault();
+                } else if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        /* CSS for Register page */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 50px;
+        }
+
+        .form-control {
+            width: 50%;
+            margin: 10px auto;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #F8F8F8;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .form-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            display: block;
+            margin: 30px auto 0;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #4B0082;
+        }
+
+        .btn-primary:hover {
+            background-color: #483D8B;
+        }
+
+    </style>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center mb-5">Welcome to PlanMate</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Upcoming Events</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="eventsList">
+                            {% include 'events_list.html' %}
+                        </div>
+                    </div>
+                </div>
+                <div id="create-event-button" class="create-event-button"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="createEventModal" tabindex="-1" role="dialog" aria-labelledby="createEventModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="create-event-content">
+                <!-- The create_event page content will be loaded here -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        /* ... Other styles ... */
+        .create-event-button {
+            position: fixed;
+            bottom: 60px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 15vw;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const createEventButton = document.getElementById("create-event-button");
+            const createEventModal = new bootstrap.Modal(document.getElementById('createEventModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            const createEventContent = document.getElementById("create-event-content");
+            const animation = lottie.loadAnimation({
+                container: createEventButton,
+                renderer: "svg",
+                loop: false,
+                autoplay: false,
+                path: "/static/icons/plus-icon.json",
+            });
+
+            createEventButton.addEventListener("click", () => {
+                animation.play();
+
+                createEventModal.show();
+                fetch("/create_event?is_modal=true&hide_navbar=true")
+                    .then((response) => response.text())
+                    .then((html) => {
+                        createEventContent.innerHTML = html;
+                    });
+            });
+        });
+
+        function closeModal() {
+            const createEventModal = bootstrap.Modal.getInstance(document.getElementById('createEventModal'));
+            createEventModal.hide();
+        }
+    </script>
+
+    <script>
+        // Before the page is loaded, when the events data is loaded from events_list.html
+        // Reformat the event date to hide the time and show only the date
+        // the id of the event date element is id="event-date"
+        // example: 2021-09-01 00:00:00 -> 2021-09-01
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventDateElements = document.querySelectorAll("#event-date");
+            eventDateElements.forEach((element) => {
+                const date = new Date(element.innerText);
+                element.innerText = date.toLocaleDateString();
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventTimeElements = document.querySelectorAll("#event-time");
+            eventTimeElements.forEach((element) => {
+                const time = element.innerText;
+                element.innerText = time.slice(0, -3);
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedImages = document.querySelectorAll('.animated-image');
+            animatedImages.forEach((element) => {
+                const imagePath = element.getAttribute('src');
+                const container = document.createElement('div');
+                container.style.width = '100%';
+                container.style.height = '15vw';
+                element.parentNode.replaceChild(container, element);
+
+                lottie.loadAnimation({
+                    container: container,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: imagePath,
+                });
+            });
+        });
+    </script>
+{% endblock %}

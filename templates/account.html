@@ -1,0 +1,163 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <h1 class="text-center">Account Management</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form id="update-username-form" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ g.csrf_token }}">
+                    <div class="form-group">
+                        <label for="new_username">New Username:</label>
+                        <input type="text" name="new_username" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Username</button>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <form id="update-email-form" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ g.csrf_token }}">
+                    <div class="form-group">
+                        <label for="new_email">New Email:</label>
+                        <input type="email" name="new_email" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Email</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center mt-4">
+                <form id="delete-account-form" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ g.csrf_token }}">
+                    <button type="submit" class="btn btn-danger">Delete Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function getCSRFToken() {
+            return $('input[name="csrf_token"]').val();
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            $('#update-username-form').on('submit', function (event) {
+                event.preventDefault();
+                let formData = $(this).serialize() + '&operation=update_username' + '&csrf_token=' + getCSRFToken();
+                $.ajax({
+                    url: '/account',
+                    type: 'POST',
+                    data: formData,
+                    success: function () {
+                        alert('Username updated successfully');
+                        $('#update-username-form').trigger('reset');
+                    },
+                    error: function () {
+                        console.error('Failed to update username.');
+                    }
+                });
+            });
+
+            $('#update-email-form').on('submit', function (event) {
+                event.preventDefault();
+                let formData = $(this).serialize() + '&operation=update_email' + '&csrf_token=' + getCSRFToken();
+                $.ajax({
+                    url: '/account',
+                    type: 'POST',
+                    data: formData,
+                    success: function () {
+                        alert('Email updated successfully. Please check your new email for a verification link.');
+                        $('#update-email-form').trigger('reset');
+                    },
+                    error: function () {
+                        console.error('Failed to update email.');
+                    }
+                });
+            });
+
+            $('#delete-account-form').on('submit', function (event) {
+                event.preventDefault();
+                if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                    let formData = 'operation=delete_account' + '&csrf_token=' + getCSRFToken();
+                    $.ajax({
+                        url: '/account',
+                        type: 'POST',
+                        data: formData,
+                        success: function () {
+                            alert('Account deleted successfully. Redirecting to the home page.');
+                            window.location.href = '/';
+                        },
+                        error: function () {
+                            console.error('Failed to delete account.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .container .row {
+        margin-bottom: 50px;
+    }
+
+    .container .row .col-md-6 {
+        margin-bottom: 50px;
+    }
+
+    .container .row .col-md-6 .form-group {
+        margin-bottom: 25px;
+    }
+
+    .container .row .col-md-6 .form-group label {
+        margin-bottom: 10px;
+    }
+
+    .container .row .col-md-6 .form-group input {
+        padding: 10px;
+    }
+
+    .container .row .col-md-6 .form-group button {
+        padding: 10px;
+    }
+
+    .container .row .col-md-12 .form-group button {
+        padding: 10px;
+    }
+
+    .container .row .col-md-12 .form-group button:hover {
+        background-color: #ff0000;
+    }
+
+    .container .row .col-md-12 .form-group button:active {
+        background-color: #ff0000;
+    }
+
+    .container .row .col-md-12 .form-group button:focus {
+        background-color: #ff0000;
+    }
+</style>
+
+{% endblock %}

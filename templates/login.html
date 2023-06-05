@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div class="row justify-content-center align-items-center h-100">
+        <div class="col-md-6">
+            <h1 id="login-header">Log in to PlanMate</h1>
+            <form action="{{ url_for('login') }}" method="POST" autocomplete="off">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary">Log in</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        .container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-top: 50px;
+}
+
+.form-control {
+  width: 50%;
+  margin: 10px auto;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #F8F8F8;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.form-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.btn-primary {
+  display: block;
+  margin: 30px auto 0;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #4B0082;
+}
+
+.btn-primary:hover {
+  background-color: #483D8B;
+}
+    </style>
+{% endblock %}
